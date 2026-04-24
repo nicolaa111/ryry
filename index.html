@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Glitch System Login</title>
+
+<style>
+body {
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+    background: linear-gradient(135deg, #fceff9, #e0f7fa);
+    overflow: hidden;
+    transition: 0.6s ease;
+}
+
+/* LOGIN */
+#loginBox {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    background: rgba(255,255,255,0.8);
+    padding: 30px;
+    border-radius: 20px;
+    text-align: center;
+    width: 280px;
+    transition: 0.5s;
+}
+
+input {
+    width: 90%;
+    padding: 10px;
+    margin-top: 10px;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+}
+
+button {
+    margin-top: 10px;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+/* MAIN MENU */
+#mainMenu, #explorePage, #exitPage {
+    display: none;
+    text-align: center;
+    padding-top: 80px;
+}
+
+/* HEARTS */
+.heart {
+    position: absolute;
+    color: pink;
+    font-size: 20px;
+    animation: floatUp 3s linear forwards;
+}
+
+@keyframes floatUp {
+    from { transform: translateY(0); opacity: 1; }
+    to { transform: translateY(-600px); opacity: 0; }
+}
+
+/* GLITCH SCREEN */
+.glitch {
+    background: black;
+    color: red;
+    text-align: center;
+    padding-top: 100px;
+    height: 100vh;
+    display: none;
+}
+
+.glitch h1 {
+    font-size: 28px;
+    animation: flicker 0.2s infinite;
+}
+
+@keyframes flicker {
+    0% { opacity: 1; }
+    50% { opacity: 0.4; }
+    100% { opacity: 1; }
+}
+
+/* EXIT CHOICE */
+#choiceBox {
+    margin-top: 20px;
+}
+
+#yesBtn, #nahBtn {
+    margin: 10px;
+    min-width: 80px;
+}
+
+#exitMsg {
+    margin-top: 20px;
+    font-size: 18px;
+}
+</style>
+</head>
+
+<body>
+
+<!-- LOGIN -->
+<div id="loginBox">
+    <h3>System Login</h3>
+    <input type="password" id="pass" placeholder="Enter password">
+    <br>
+    <button onclick="login()">Login</button>
+</div>
+
+<!-- GLITCH SCREEN -->
+<div id="glitchScreen" class="glitch">
+    <h1 id="glitchText"></h1>
+</div>
+
+<!-- MAIN MENU -->
+<div id="mainMenu">
+    <h2>Welcome back...</h2>
+    <button onclick="openExplore()">Explore</button>
+</div>
+
+<!-- EXPLORE -->
+<div id="explorePage">
+    <h3>these songs… somehow remind me of you</h3>
+
+    <iframe style="border-radius:12px"
+        src="https://open.spotify.com/embed/playlist/7hZ9UBozuSzs2ffiPUEO4c"
+        width="300" height="380" frameborder="0"
+        allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture">
+    </iframe>
+
+    <br>
+    <button onclick="exitFlow()">Exit</button>
+</div>
+
+<!-- EXIT -->
+<div id="exitPage">
+    <h2 id="exitMsg"></h2>
+
+    <div id="choiceBox">
+        <button id="yesBtn" onclick="yesAction()">yes</button>
+        <button id="nahBtn" onclick="nahAction()">nah</button>
+    </div>
+</div>
+
+<script>
+const passInput = document.getElementById("pass");
+
+function speak(text) {
+    let msg = new SpeechSynthesisUtterance(text);
+    msg.rate = 1;
+    speechSynthesis.speak(msg);
+}
+
+function login() {
+    const val = passInput.value;
+
+    if (val === "oldman") {
+        document.getElementById("loginBox").style.display = "none";
+        document.getElementById("mainMenu").style.display = "block";
+
+        speak("oh... you remembered it");
+
+        spawnHearts();
+    } else {
+        showGlitch();
+    }
+}
+
+/* HEARTS */
+function spawnHearts() {
+    for (let i = 0; i < 15; i++) {
+        let h = document.createElement("div");
+        h.className = "heart";
+        h.innerHTML = "💗";
+        h.style.left = Math.random() * window.innerWidth + "px";
+        h.style.top = "80%";
+        document.body.appendChild(h);
+
+        setTimeout(() => h.remove(), 3000);
+    }
+}
+
+/* GLITCH */
+function showGlitch() {
+    document.getElementById("loginBox").style.display = "none";
+
+    let g = document.getElementById("glitchScreen");
+    let text = document.getElementById("glitchText");
+
+    g.style.display = "block";
+
+    let lines = [
+        "ACCESS DENIED",
+        "SYSTEM BREACH DETECTED...",
+        "THAT'S NOT THE PASSWORD I GAVE",
+        "SO WHO ARE YOU LOGGING IN FOR?"
+    ];
+
+    let i = 0;
+
+    let interval = setInterval(() => {
+        text.innerText = lines[i];
+        i++;
+        if (i >= lines.length) clearInterval(interval);
+    }, 1200);
+
+    speak("Access denied");
+
+    setTimeout(() => {
+        location.reload();
+    }, 6000);
+}
+
+/* MENU */
+function openExplore() {
+    document.getElementById("mainMenu").style.display = "none";
+    document.getElementById("explorePage").style.display = "block";
+}
+
+/* EXIT FLOW */
+function exitFlow() {
+    document.getElementById("explorePage").style.display = "none";
+    document.getElementById("exitPage").style.display = "block";
+
+    let msg = document.getElementById("exitMsg");
+    msg.innerText = "ERROR_403...";
+
+    setTimeout(() => {
+        msg.innerText = "oh you're leaving?";
+    }, 2000);
+
+    setTimeout(() => {
+        msg.innerText = "so you got another girl?";
+    }, 4000);
+}
+
+/* YES */
+function yesAction() {
+    let btn = document.getElementById("yesBtn");
+
+    document.getElementById("exitMsg").innerText = "hmmp";
+
+    btn.style.transform = `translate(${Math.random()*10-5}px, ${Math.random()*10-5}px)`;
+
+    setTimeout(() => {
+        btn.style.transform = "translate(0px,0px)";
+    }, 400);
+}
+
+/* NAH */
+function nahAction() {
+    document.getElementById("exitMsg").innerText = "lie but whatever";
+
+    let btn = document.getElementById("nahBtn");
+    btn.style.transform = "scale(1.05)";
+
+    // laugh via speech
+    speak("haha");
+
+    setTimeout(() => {
+        speak("k bye just remember im cute and you're just aging");
+
+        setTimeout(() => {
+            document.getElementById("exitPage").style.display = "none";
+            document.getElementById("loginBox").style.display = "block";
+            location.reload();
+        }, 3500);
+
+    }, 1000);
+}
+</script>
+
+</body>
+</html>
